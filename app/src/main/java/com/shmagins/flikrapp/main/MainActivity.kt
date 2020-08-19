@@ -11,6 +11,8 @@ import com.shmagins.flikrapp.R
 import com.shmagins.flikrapp.common.MainActivityViewModel
 import com.shmagins.flikrapp.common.ReadyPhoto
 import com.shmagins.flikrapp.photolist.PhotoListFragment
+import com.shmagins.flikrapp.singlephoto.SinglePhotoActivity
+import com.shmagins.flikrapp.singlephoto.SinglePhotoFragment
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
@@ -25,6 +27,7 @@ class MainActivity : DaggerAppCompatActivity(), HasAndroidInjector {
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Fragment>
     lateinit var searcher: Searcher
+    var isLandscape: Boolean = false
 
     interface Searcher {
         fun onSearch(o: Observable<ReadyPhoto>)
@@ -34,12 +37,35 @@ class MainActivity : DaggerAppCompatActivity(), HasAndroidInjector {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment_container)
+        isLandscape = resources.getBoolean(R.bool.isLandscape)
+
         val fragment = PhotoListFragment()
         searcher = fragment
         supportFragmentManager
             .beginTransaction()
             .add(R.id.main_activity_fragment_container, fragment, "MASTER_FRAGMENT")
             .commit()
+
+        if(isLandscape) {
+            val fragment = SinglePhotoFragment("","")
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.detail_fragment_container, fragment, "DETAIL_FRAGMENT")
+                .commit()
+        }
+    }
+
+    fun openDetail(url: String, title: String){
+        if (isLandscape) {
+            val fragment = SinglePhotoFragment(url, title)
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.detail_fragment_container, fragment, "DETAIL_FRAGMENT")
+                .addToBackStack("DETAIL_FRAGMENT_CHANGE")
+                .commit()
+        } else {
+            SinglePhotoActivity.start(this, url, title)
+        }
     }
 
     override fun onDestroy() {

@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.shmagins.flikrapp.R
 import com.shmagins.flikrapp.common.MainActivityViewModel
 import com.shmagins.flikrapp.common.ReadyPhoto
+import com.shmagins.flikrapp.main.MainActivity
 import com.shmagins.flikrapp.singlephoto.SinglePhotoActivity
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -35,7 +36,10 @@ class PhotoListAdapter() : RecyclerView.Adapter<PhotoListAdapter.PhotoListRecord
                 .load(readyPhoto.url)
                 .into(imageView)
             imageView.setOnClickListener {
-                SinglePhotoActivity.start(view.context, readyPhoto.url, readyPhoto.title)
+                val activityContext: Context = view.context
+                if (activityContext is MainActivity) {
+                    activityContext.openDetail(readyPhoto.url, readyPhoto.title)
+                }
             }
         }
     }

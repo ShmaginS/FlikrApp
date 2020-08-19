@@ -17,11 +17,30 @@ class SinglePhotoFragment(val url: String, val title: String) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
-        Glide
-            .with(requireActivity())
-            .load(url)
-            .into(view.findViewById(R.id.image))
-        view.findViewById<TextView>(R.id.title).text = title
+        if (url == "") {
+            view.findViewById<TextView>(R.id.photo_placeholder).visibility = View.VISIBLE
+        } else {
+            Glide
+                .with(requireActivity())
+                .load(url)
+                .into(view.findViewById(R.id.image))
+            view.findViewById<TextView>(R.id.title).text = title
+        }
         return view
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(URL, url)
+        outState.putString(TITLE, title)
+    }
+
+    companion object {
+        const val URL: String = "URL"
+        const val TITLE: String = "TITLE"
     }
 }
