@@ -78,8 +78,6 @@ class MainActivity : DaggerAppCompatActivity(), HasAndroidInjector {
                                 ViewModelProvider(this@MainActivity)
                                     .get(MainActivityViewModel::class.java)
                                     .searchTextChanged(s)
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe{ readyPhoto: ReadyPhoto? -> adapter.addPhoto(readyPhoto!!) }
                             }
                         }, delay )
                     }
