@@ -1,13 +1,15 @@
 package com.shmagins.flikrapp.di
 
 import android.content.Context
+import com.google.gson.GsonBuilder
 import com.shmagins.flikrapp.common.NetworkRepository
 import dagger.Module
 import dagger.Provides
-import dagger.android.AndroidInjector
+import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+
 
 @Module
 class NetworkModule(private val appContext: Context) {
@@ -18,6 +20,7 @@ class NetworkModule(private val appContext: Context) {
         return Retrofit.Builder()
             .baseUrl("https://api.flickr.com/services/")
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .build()
     }
 

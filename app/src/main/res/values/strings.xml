@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FlikrApp</string>
+    <string name="title_search">Поиск</string>
 </resources>

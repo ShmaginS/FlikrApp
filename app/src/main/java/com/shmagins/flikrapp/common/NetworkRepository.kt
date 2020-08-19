@@ -1,11 +1,22 @@
 package com.shmagins.flikrapp.common
 
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.schedulers.Schedulers
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class NetworkRepository(val retrofit: Retrofit) {
+class NetworkRepository(private val retrofit: Retrofit) {
 
-    public fun getThumbnails(page: Int, count: Int = 50): List<String> {
-        return ArrayList<String>()
-    }
+    private val flikrService: FlikrService = retrofit.create(FlikrService::class.java)
+
+    fun getPhotos(text: String, page: Int, perPage: Int, type: String): Observable<ReadyPhoto> =
+        flikrService.getResponse(text, page, perPage, type)
+            .subscribeOn(Schedulers.newThread())
+            .flatMap { response: Response? -> Observable.just(response?.photos) }
+            .flatMap { photos: Photos? -> Observable.fromIterable(photos?.photo) }
+            .map { photo: Photo? -> ReadyPhoto(
+                "https://farm${photo?.farm}.staticflickr.com/${photo?.server}/${photo?.id}_${photo?.secret}_${type}.jpg",
+                photo?.title ?: ""
+            ) }
+
 }
