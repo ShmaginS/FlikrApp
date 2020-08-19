@@ -16,6 +16,7 @@ import com.shmagins.flikrapp.common.ReadyPhoto
 import com.shmagins.flikrapp.main.MainActivity
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 class PhotoListFragment : Fragment(), MainActivity.Searcher {
@@ -78,7 +79,9 @@ class PhotoListFragment : Fragment(), MainActivity.Searcher {
         compositeDisposable.dispose()
     }
 
-    override fun onSearch(text: String) {
-        (adapter as PhotoListAdapter).clearPhotos()
+    override fun onSearch(o: Observable<ReadyPhoto>) {
+        activity?.runOnUiThread { (adapter as PhotoListAdapter).clearPhotos() }
+        o.observeOn(AndroidSchedulers.mainThread())
+            .subscribe{readyPhoto: ReadyPhoto? -> adapter.addPhoto(readyPhoto!!)}
     }
 }

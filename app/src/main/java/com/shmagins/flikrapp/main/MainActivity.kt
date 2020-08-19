@@ -15,7 +15,7 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import dagger.android.support.DaggerAppCompatActivity
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import java.sql.Time
 import java.util.*
 import javax.inject.Inject
@@ -27,7 +27,7 @@ class MainActivity : DaggerAppCompatActivity(), HasAndroidInjector {
     lateinit var searcher: Searcher
 
     interface Searcher {
-        fun onSearch(text: String)
+        fun onSearch(o: Observable<ReadyPhoto>)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,14 +56,12 @@ class MainActivity : DaggerAppCompatActivity(), HasAndroidInjector {
 
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(p0: String?): Boolean {
-                    searcher.onSearch(p0!!)
                     submitSearch(p0)
                     return true
                 }
 
                 override fun onQueryTextChange(p0: String?): Boolean {
                     if (p0 != null && p0.length > 3) {
-                        searcher.onSearch(p0!!)
                         submitSearch(p0)
                     }
                     return false
@@ -75,9 +73,11 @@ class MainActivity : DaggerAppCompatActivity(), HasAndroidInjector {
                         timer = Timer()
                         timer.schedule(object: TimerTask(){
                             override fun run() {
+                                searcher.onSearch(
                                 ViewModelProvider(this@MainActivity)
                                     .get(MainActivityViewModel::class.java)
                                     .searchTextChanged(s)
+                                )
                             }
                         }, delay )
                     }
