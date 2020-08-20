@@ -1,6 +1,7 @@
 package com.shmagins.flikrapp.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
@@ -39,6 +40,7 @@ class MainActivity : DaggerAppCompatActivity(), HasAndroidInjector {
         setContentView(R.layout.activity_fragment_container)
         isLandscape = resources.getBoolean(R.bool.isLandscape)
 
+        Log.d("TAG", "" + isLandscape)
         val fragment = PhotoListFragment()
         searcher = fragment
         supportFragmentManager
